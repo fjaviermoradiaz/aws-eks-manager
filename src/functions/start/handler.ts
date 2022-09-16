@@ -9,6 +9,9 @@ import { PromiseResult } from 'aws-sdk/lib/request';
 
 const start: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
+  const CLUSTER_NAME:string = '[CLUSTER_NAME]';
+  const NODE_GROUP_NAME:string = '[NODE_GROUP_NAME]';
+
 
   console.log("Setting NodeGroupScalingCongig DEV");
   let nodeGroupConfig:NodegroupScalingConfig = {
@@ -18,10 +21,9 @@ const start: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
 
   };
 
-  console.log("Setting UpdateNodegroupConfigRequest DEV");
   let nodeGroupRequest:UpdateNodegroupConfigRequest = {
-    clusterName: 'dgp-devl',
-    nodegroupName: 'developv2-node-group',
+    clusterName: CLUSTER_NAME,
+    nodegroupName: NODE_GROUP_NAME,
     scalingConfig: nodeGroupConfig
   };
 
@@ -30,25 +32,6 @@ const start: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
   let response:PromiseResult<UpdateNodegroupConfigResponse, AWSError> = await new EKS().updateNodegroupConfig(nodeGroupRequest).promise();
   console.log(response);
   
-  /*console.log("Setting NodeGroupScalingCongig STAGING");
-  nodeGroupConfig = {
-    desiredSize: 2,
-    maxSize: 2,
-    minSize: 2
-
-  };
-
-  console.log("Setting UpdateNodegroupConfigRequest STAGING");
-  nodeGroupRequest = {
-    clusterName: 'dgp-staging',
-    nodegroupName: 'staging-node-group',
-    scalingConfig: nodeGroupConfig
-  };
-
-  console.log("Updating STAGING NodeGroupConfig");
-  response = await new EKS().updateNodegroupConfig(nodeGroupRequest).promise();
-  console.log(response);
-*/
   return formatJSONResponse({
     message: 'NodeGroupScaling updated to 0',
     event,
